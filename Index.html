@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Forever ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+/* Background Image */
+body::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: url('couple.jpg') no-repeat center center/cover;
+    filter: blur(6px) brightness(0.6);
+    z-index: -1;
+}
+
+/* Page layout */
+.page {
+    display: none;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.active {
+    display: flex;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    margin: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.yes {
+    background: #ff2e63;
+    color: white;
+}
+
+.no {
+    background: white;
+    color: #ff2e63;
+    position: absolute;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+/* Floating Hearts */
+.heart {
+    position: absolute;
+    bottom: -10px;
+    animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+/* Confetti */
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+</audio>
+
+<!-- PAGE 1: Countdown -->
+<div class="page active" id="page1">
+    <h1>Something special is coming... 💖</h1>
+    <h1 id="count">3</h1>
+</div>
+
+<!-- PAGE 2: Love Slides -->
+<div class="page" id="page2">
+    <h1 id="slideText"></h1>
+    <button onclick="nextSlide()">Next ➡️</button>
+</div>
+
+<!-- PAGE 3: Proposal -->
+<div class="page" id="page3">
+    <h1 id="questionText"></h1>
+    <div style="position:relative; width:100%; height:200px;">
+        <button class="yes" id="yesBtn" onclick="celebrate()">YES 💖</button>
+        <button class="no" id="noBtn">NO 🙈</button>
+    </div>
+</div>
+
+<!-- PAGE 4: Celebration -->
+<div class="page" id="page4">
+    <h1 id="finalMessage"></h1>
+</div>
+
+<script>
+// Get name from URL
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name") || "My Love";
+
+// Countdown
+let num = 3;
+let counter = document.getElementById("count");
+let countdown = setInterval(() => {
+    num--;
+    counter.innerText = num;
+    if (num === 0) {
+        clearInterval(countdown);
+        document.getElementById("page1").classList.remove("active");
+        document.getElementById("page2").classList.add("active");
+        document.getElementById("slideText").innerText =
+            `${name}, you are the best thing that ever happened to me ❤️`;
+    }
+}, 1000);
+
+// Slides
+const slides = [
+    `${name}, every moment with you feels magical ✨`,
+    `You make my world brighter just by existing 💕`,
+    `I don’t want a future without you 💍`
+];
+
+let slideIndex = 0;
+
+function nextSlide() {
+    slideIndex++;
+    if (slideIndex < slides.length) {
+        document.getElementById("slideText").innerText = slides[slideIndex];
+    } else {
+        document.getElementById("page2").classList.remove("active");
+        document.getElementById("page3").classList.add("active");
+        document.getElementById("questionText").innerText =
+            `${name}, will you be mine forever? ❤️`;
+    }
+}
+
+// Moving NO + Growing YES
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+let scale = 1;
+
+noBtn.addEventListener("mouseover", () => {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 100);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+
+    scale += 0.15;
+    yesBtn.style.transform = `scale(${scale})`;
+});
+
+// Celebration
+function celebrate() {
+    document.getElementById("page3").classList.remove("active");
+    document.getElementById("page4").classList.add("active");
+    document.getElementById("finalMessage").innerText =
+        `${name}, you just made me the happiest person alive 💖`;
+
+    // Confetti effect
+    for (let i = 0; i < 150; i++) {
+        let confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.backgroundColor =
+            `hsl(${Math.random() * 360}, 100%, 70%)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+    }
+}
+
+// Floating Hearts
+function createHeart() {
+    let heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = Math.random() * 20 + 15 + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+}
+setInterval(createHeart, 300);
+
+// Play music on first click
+document.body.addEventListener("click", () => {
+    document.getElementById("bgMusic").play();
+}, { once: true });
+
+</script>
+
+</body>
+</html>
+
+index.html
